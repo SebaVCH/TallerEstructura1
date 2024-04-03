@@ -4,20 +4,23 @@
 
 #include "Persona.h"
 
-
-Persona::Persona(string nombre, string password, string rut, int edad, string tipo, string ocupacion) {
+Persona::Persona(string nombre, string password, string rut, int edad, string tipo, string ocupacion, string eventoAsignado) {
     this -> nombre = nombre;
     this -> password = password;
     this -> rut = rut;
     this -> edad = edad;
     this -> tipo = tipo;
     this -> ocupacion = ocupacion;
+    this -> eventoAsignado = eventoAsignado;
 }
 
 void Persona::imprimirInformacion() {
-    cout << " - " << nombre << " (" << edad << " años)" << endl;
-    cout << "   - Ocupación: " << ocupacion << endl;
-    cout << "   - Tipo: " << tipo << endl;
+    cout << "Nombre: " << nombre << endl;
+    cout << "Edad: " << edad << " años" << endl;
+    cout << "Evento asignado: " << eventoAsignado << endl;
+    cout << "Ocupación: " << ocupacion << endl;
+    cout << "Tipo: " << tipo << endl;
+
 }
 
 string Persona::getNombre() {
@@ -42,4 +45,12 @@ string Persona::getOcupacion() {
 
 string Persona::getPass() {
     return password;
+}
+
+string Persona::getEvento() {
+    return std::string();
+}
+
+void Persona::setEvento(string evento) {
+    this -> eventoAsignado = evento;
 }

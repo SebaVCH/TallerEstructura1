@@ -10,8 +10,7 @@ using namespace std;
 
 //Menus
 void menuGeneral();
-void menuAdmin();
-void mostrarEventos();
+void menuAdmin(vector<Persona> &Personas,vector<Evento> &Eventos);
 
 //Lectura y escritura de archivos;
 void cargarArchivos(vector<Persona> &Personas,vector<Evento> &Eventos);
@@ -19,11 +18,20 @@ void sobreEscritura();
 
 //Otros
 bool inicioSesion(vector<Persona> &Personas);
+void mostrarEventos(vector<Evento> &Eventos);
 
+//Menu admin
+void crearEvento(vector<Evento> &Eventos);
+void registrarAsistentes(vector<Persona> &Personas,vector<Evento> &Eventos);
+void consultarAsistentes(vector<Evento> &vector);
+
+void generarInformesTotales(vector<Evento> &Eventos);
 
 int main() {
 
     menuGeneral();
+    sobreEscritura();
+
     return 0;
 }
 
@@ -33,7 +41,7 @@ void menuGeneral(){
     vector<Persona> PersonasTotales;
     vector<Evento> EventosTotales;
     cargarArchivos(PersonasTotales,EventosTotales);
-    mostrarEventos();
+    mostrarEventos(EventosTotales);
     cout << "Deseas acceder al menu de administrador? (S/N)" << endl;
     string opcion;
     cin >> opcion;
@@ -41,18 +49,17 @@ void menuGeneral(){
     if (opcion == "S" ){
         bool inicio = inicioSesion(PersonasTotales);
         if (inicio == true){
-            menuAdmin();
+            menuAdmin(PersonasTotales,EventosTotales);
         } else {
             cout << "Acceso denegado... " << endl;
         }
-
 
     } else {
         while (opcion != "S"){
             cout << "Deseas volver a ver los eventos? (S/N)" << endl;
             cin >> opcion;
             if(opcion == "S"){
-                mostrarEventos();
+                mostrarEventos(EventosTotales);
             } else {
                 cout << "Terminando el programa" << endl;
                 break;
@@ -64,13 +71,17 @@ void menuGeneral(){
 
 }
 
-void mostrarEventos() {
+void mostrarEventos(vector<Evento> &Eventos) {
 
-    cout << "Hola" << endl;
+    cout << "**Listado de eventos**"<< endl;
+    for(Evento evento: Eventos){
+        evento.generarInformeIndividual();
+        cout << endl;
+    }
 
 }
 
-void menuAdmin(){
+void menuAdmin(vector<Persona>  &Personas, vector<Evento> &Eventos){
 
     int opcion = -1;
 
@@ -86,16 +97,16 @@ void menuAdmin(){
 
         switch (opcion) {
             case 1:
-                //Metodo de crear evento...
+                crearEvento(Eventos);
                 break;
             case 2:
-                //Metodo de Registrar asistente...
+                registrarAsistentes(Personas,Eventos);
                 break;
             case 3:
-                //Metodo de consultar lista de asistentes
+                consultarAsistentes(Eventos);
                 break;
             case 4:
-                //Generar informes
+                generarInformesTotales(Eventos);
                 break;
             case 0:
                 cout << "Saliendo... " << endl;
@@ -105,6 +116,53 @@ void menuAdmin(){
 
 }
 
+void generarInformesTotales(vector<Evento> &Eventos) {
+
+    int cantidadEventosTotales = Eventos.size();
+    int asistentesTotales = 0;
+
+    for(Evento evento: Eventos){
+        asistentesTotales += evento.cantidadPersonas();
+    }
+
+    cout << "Total de eventos: " << cantidadEventosTotales<< endl;
+    cout << "Total asistentes: " << asistentesTotales<< endl;
+    cout << "Promedio de asistentes por evento: " << asistentesTotales / cantidadEventosTotales << endl;
+
+    cout << "**Lista de asistentes por cada evento**" << endl;
+    for(Evento evento: Eventos){
+        cout << "Nombre del evento: " << evento.getNombreEvento() << endl;
+        evento.listadoAsistentes();
+        cout << endl;
+    }
+
+
+
+
+
+}
+
+void consultarAsistentes(vector<Evento> &Eventos) {
+
+    string eventoSeleccionado;
+    cout << "**Listado de eventos**" << endl;
+    for (Evento evento: Eventos) {
+        cout << "Nombre del evento: " << evento.getNombreEvento() << " Tipo del evento: " << evento.getTipo() << endl;
+    }
+
+    cout << endl;
+
+    cout << "Indique el nombre del evento al que desea ver la lista de asistentes: " << endl;
+    cin >> eventoSeleccionado;
+
+    for(Evento evento: Eventos){
+        if(evento.getNombreEvento() == eventoSeleccionado){
+            evento.generarInformeIndividual();
+        }
+        break;
+    }
+}
+
 void cargarArchivos(vector<Persona>  &Personas, vector<Evento> &Eventos) {
     ifstream archivoPersonas("personas.txt");
 
@@ -112,7 +170,7 @@ void cargarArchivos(vector<Persona>  &Personas, vector<Evento> &Eventos) {
         string linea;
         while (getline(archivoPersonas, linea)) {
             stringstream ss(linea);
-            string nombre, password, rut, tipo, ocupacion;
+            string nombre, password, rut, tipo, ocupacion, evento;
             int edad;
 
             getline(ss, nombre, ',');
@@ -121,18 +179,14 @@ void cargarArchivos(vector<Persona>  &Personas, vector<Evento> &Eventos) {
             ss >> edad; ss.ignore();
             getline(ss, tipo, ',');
             getline(ss, ocupacion, ',');
+            getline(ss, evento, ',');
 
-            Personas.push_back({nombre, password, rut, edad, tipo, ocupacion});
+            Personas.push_back({nombre, password, rut, edad, tipo, ocupacion,evento});
         }
         archivoPersonas.close();
     } else {
         cout << "Error al abrir el archivo de personas" << endl;
     }
-}
-
-
-void sobreEscritura(){
-
 }
 
 bool inicioSesion(vector<Persona> &Personas){
@@ -154,6 +208,56 @@ bool inicioSesion(vector<Persona> &Personas){
     cout << "Usuario no encontrado..." << endl;
 
     return false;
+
+}
+
+void crearEvento(vector<Evento> &Eventos) {
+    string nombre,tipo,fecha,tema,ubicacion;
+    cout << "Indique el nombre del evento" << endl;
+    cin >> nombre;
+    cout << "Indique el tipo del evento" << endl;
+    cin >> tipo;
+    cout << "Indique la fecha del evento (Dia-Mes-Año)" << endl;
+    cin >> fecha;
+    cout << "Indique el tema del evento" << endl;
+    cin >> tema;
+    cout << "Indique la ubicacion" << endl;
+    cin >> ubicacion;
+
+    Eventos.push_back({nombre,tipo,fecha,tema,ubicacion});
+}
+
+void registrarAsistentes(vector<Persona> &Personas,vector<Evento> &Eventos){
+
+    string nombrePersona,nombreEvento;
+    cout << "**Listado de personas**" << endl;
+    for(Persona persona: Personas) {
+        cout << "Nombre: " << persona.getNombre() << " Evento actual: " << persona.getEvento() << endl;
+    }
+
+    cout << "Indique el nombre de la persona que desea agregar: " << endl;
+    cin >> nombrePersona;
+
+    cout << "**Listado de eventos**" << endl;
+    for (Evento evento: Eventos) {
+        cout << "Nombre del evento: " << evento.getNombreEvento() << " Tipo del evento: " << evento.getTipo() << endl;
+    }
+
+    cout << "Indique el nombre del evento al que desea asignar la persona: " << endl;
+    cin >> nombreEvento;
+
+    for(Evento evento: Eventos) {
+        for(Persona persona: Personas){
+            if(nombreEvento == evento.getNombreEvento() && persona.getNombre() == nombrePersona){
+                persona.setEvento(nombreEvento);
+                evento.registrarAsistente(persona);
+            }
+        }
+    }
+
+}
+
+void sobreEscritura(){
 
 }
 

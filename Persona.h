@@ -9,10 +9,10 @@
 using namespace std;
 class Persona {
 private:
-    string nombre,tipo,ocupacion,rut, password;
+    string nombre,tipo,ocupacion,rut, password,eventoAsignado;
     int edad;
 public:
-    Persona(string nombre, string password,string rut ,int edad,string tipo, string ocupacion);
+    Persona(string nombre, string password,string rut ,int edad,string tipo, string ocupacion, string eventoAsignado);
     void imprimirInformacion();
     string getNombre();
     string getPass();
@@ -20,6 +20,9 @@ public:
     int getEdad();
     string getTipo();
     string getOcupacion();
+    string getEvento();
+
+    void setEvento(string evento);
 
 };
 

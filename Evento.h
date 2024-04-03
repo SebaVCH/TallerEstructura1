@@ -13,12 +13,16 @@ using namespace std;
 class Evento {
 
 private:
-    string tipo,fecha,tema,ubicacion;
+    string nombre,tipo,fecha,tema,ubicacion;
     vector<Persona> personas;
 public:
-    Evento(string tipo, string fecha, string tema, string ubicacion);
-    void registrarAsistente();
-    void generarInforme();
+    Evento(string nombre,string tipo, string fecha, string tema, string ubicacion);
+    void registrarAsistente(Persona &persona);
+    void generarInformeIndividual();
+    void listadoAsistentes();
+    string getNombreEvento();
+    string getTipo();
+    int cantidadPersonas();
 
 };
 
