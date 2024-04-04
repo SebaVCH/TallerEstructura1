@@ -58,7 +58,7 @@ void Evento::listadoAsistentes() {
 }
 
 Evento::~Evento() {
-    cout << "Se borro la persona" << endl;
+    cout << "Se borro el evento" << endl;
 }
 
 string Evento::getTema() {

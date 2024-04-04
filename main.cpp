@@ -21,7 +21,7 @@ bool inicioSesion(vector<Persona*> Personas);
 void mostrarEventos(vector<Evento*> Eventos);
 
 //Menu admin
-void crearEvento(vector<Evento*> Eventos);
+void crearEvento(vector<Evento*> &Eventos);
 void registrarAsistentes(vector<Persona*> Personas,vector<Evento*> Eventos);
 void consultarAsistentes(vector<Evento*> Eventos);
 void generarInformesTotales(vector<Evento*> Eventos);
@@ -44,12 +44,12 @@ void menuGeneral(){
     cout << "Deseas acceder al menu de administrador? (S/N)" << endl;
     string opcion;
     cin >> opcion;
-    transform(opcion.begin(), opcion.end(), opcion.begin(), ::tolower);
+    transform(opcion.begin(), opcion.end(), opcion.begin(), ::toupper);
     if (opcion == "S" ){
         bool inicio = inicioSesion(PersonasTotales);
         if (inicio == true){
             menuAdmin(PersonasTotales,EventosTotales);
-            sobreEscritura(PersonasTotales,EventosTotales);
+
         } else {
             cout << "Acceso denegado... " << endl;
         }
@@ -68,6 +68,7 @@ void menuGeneral(){
         }
 
     }
+    sobreEscritura(PersonasTotales,EventosTotales);
 
 }
 
@@ -114,9 +115,10 @@ void menuAdmin(vector<Persona*> Personas, vector<Evento*> Eventos){
             case 0:
                 cout << "Saliendo... " << endl;
                 break;
+            default:
+                cout << "Opcion invalida" << endl;
         }
     }
-
 }
 
 void generarInformesTotales(vector<Evento*> Eventos) {
@@ -135,16 +137,15 @@ void generarInformesTotales(vector<Evento*> Eventos) {
     cout << "**Lista de asistentes por cada evento**" << endl;
     for(Evento *evento: Eventos){
         cout << "Nombre del evento: " << evento->getNombreEvento() << endl;
+        cout << "Numero de asistentes totales: " << evento->cantidadPersonas() << endl;
         evento->listadoAsistentes();
         cout << endl;
     }
-
 
 }
 
 void consultarAsistentes(vector<Evento*> Eventos) {
 
-    string eventoSeleccionado;
     cout << "**Listado de eventos**" << endl;
     for (Evento *evento: Eventos) {
         cout << "Nombre del evento: " << evento->getNombreEvento() << " Tipo del evento: " << evento->getTipo() << endl;
@@ -152,14 +153,15 @@ void consultarAsistentes(vector<Evento*> Eventos) {
 
     cout << endl;
 
+    string eventoSeleccionado;
     cout << "Indique el nombre del evento al que desea ver la lista de asistentes: " << endl;
-    cin >> eventoSeleccionado;
+    cin.ignore();
+    getline(cin, eventoSeleccionado);
 
-    for(Evento *evento: Eventos){
-        if(evento->getNombreEvento() == eventoSeleccionado){
-            evento->generarInformeIndividual();
+    for (Evento *evento : Eventos) {
+        if (evento->getNombreEvento() == eventoSeleccionado) {
+            evento->listadoAsistentes();
         }
-        break;
     }
 }
 
@@ -187,6 +189,7 @@ void cargarArchivos(vector<Persona*>& Personas, vector<Evento*>& Eventos) {
     } else {
         cout << "Error al abrir el archivo de personas" << endl;
     }
+
     ifstream archivoEventos("eventos.txt");
 
     if (archivoEventos.is_open()) {
@@ -194,7 +197,6 @@ void cargarArchivos(vector<Persona*>& Personas, vector<Evento*>& Eventos) {
         while (getline(archivoEventos, linea)) {
             stringstream ss(linea);
             string nombre, tipo, fecha, tema, ubicacion;
-            bool valido = true;
 
             getline(ss, nombre, ',');
             getline(ss, tipo, ',');
@@ -202,20 +204,19 @@ void cargarArchivos(vector<Persona*>& Personas, vector<Evento*>& Eventos) {
             getline(ss, tema, ',');
             getline(ss, ubicacion, ',');
 
-            //Validar que la linea tenga la información completa
-            if (nombre.empty() || tipo.empty() || fecha.empty() || tema.empty() || ubicacion.empty()) {
-                valido = false;
-            }
-
-            if (valido) {
-                Eventos.push_back(new Evento(nombre, tipo, fecha, tema, ubicacion));
-            } else {
-                cout << "Linea invalida en el archivo de eventos: " << linea << endl;
-            }
+            Eventos.push_back(new Evento(nombre, tipo, fecha, tema, ubicacion));
         }
         archivoEventos.close();
     } else {
         cout << "Error al abrir el archivo de eventos" << endl;
+    }
+
+    for(Evento *evento: Eventos) {
+        for(Persona *persona: Personas){
+            if(evento->getNombreEvento() == persona->getEvento()){
+                evento->registrarAsistente(persona);
+            }
+        }
     }
 
 }
@@ -231,8 +232,11 @@ bool inicioSesion(vector<Persona*> Personas){
     cin >> password;
 
     for(Persona *personita: Personas){
-        if (nombreUsuario == personita->getNombre() && password == personita->getPass() && personita->getTipo() == "admin"){
-            return true;
+        if (nombreUsuario == personita->getNombre() && password == personita->getPass()){
+            cout << "usuario encontrado" <<endl;
+            if(personita->getTipo() == "admin") {
+                return true;
+            }
         }
     }
 
@@ -242,7 +246,8 @@ bool inicioSesion(vector<Persona*> Personas){
 
 }
 
-void crearEvento(vector<Evento*> Eventos) {
+void crearEvento(vector<Evento*> &Eventos) {
+
     string nombre,tipo,fecha,tema,ubicacion;
     cout << "Indique el nombre del evento" << endl;
     cin >> nombre;
@@ -255,7 +260,12 @@ void crearEvento(vector<Evento*> Eventos) {
     cout << "Indique la ubicacion" << endl;
     cin >> ubicacion;
 
-    Eventos.push_back(new Evento(nombre,tipo,fecha,tema,ubicacion));
+    Evento* nuevoEvento = new Evento(nombre,tipo,fecha,tema,ubicacion);
+
+    Eventos.emplace_back(nuevoEvento);
+
+    cout << "Se agrego correctamente" << endl;
+
 }
 
 void registrarAsistentes(vector<Persona*> Personas,vector<Evento*> Eventos){
@@ -275,7 +285,8 @@ void registrarAsistentes(vector<Persona*> Personas,vector<Evento*> Eventos){
     }
 
     cout << "Indique el nombre del evento al que desea asignar la persona: " << endl;
-    cin >> nombreEvento;
+    cin.ignore();
+    getline(cin,nombreEvento);
 
     for(Evento *evento: Eventos) {
         for(Persona *persona: Personas){
@@ -293,11 +304,13 @@ void sobreEscritura(vector<Persona*> Personas, vector<Evento*> Eventos){
     ofstream archivoPersonas("personas.txt");
     ofstream archivoEventos("eventos.txt");
 
+
     for (Persona* persona : Personas) {
         archivoPersonas << persona->getNombre() << "," << persona->getPass() << "," << persona->getRut() << ","
                         << persona->getEdad() << "," << persona->getTipo() << "," << persona->getOcupacion() << ","
                         << persona->getEvento() << endl;
     }
+
 
     for (Evento* evento : Eventos) {
         archivoEventos << evento->getNombreEvento() << "," << evento->getTipo() << "," << evento->getFecha() << ","
@@ -307,8 +320,6 @@ void sobreEscritura(vector<Persona*> Personas, vector<Evento*> Eventos){
     archivoPersonas.close();
     archivoEventos.close();
 
-
-    //Borrado de memoria
     for(Persona *persona: Personas){
         delete persona;
     }

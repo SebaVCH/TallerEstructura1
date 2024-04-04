@@ -49,7 +49,7 @@ string Persona::getPass() {
 }
 
 string Persona::getEvento() {
-    return std::string();
+    return eventoAsignado;
 }
 
 void Persona::setEvento(string evento) {

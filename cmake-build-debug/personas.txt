@@ -1,3 +1,4 @@
-juanito,hola123,11.111.111-1,admin,administrador,Ninguno
-pedrito,hola1234,22.222.222-2,visitante,visitante,Boda de Diego
-diegito,hola12345,33.333.333-3,trabajador,decorador,Premiacion de Pedro
+juanito,hola123,11.111.111-1,42,admin,sin ocupacion,Ninguno
+pedrito,hola1234,22.222.222-2,32,visitante,visitante,Boda de Diego
+diegito,hola12345,33.333.333-3,18,trabajador,decorador,Premiacion de Pedro
+elquetelo,hola,12.345.678-9,18,visitante,visitante,Boda de Diego
