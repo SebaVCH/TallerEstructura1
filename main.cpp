@@ -13,7 +13,7 @@ void menuGeneral();
 void menuAdmin(vector<Persona*> Personas,vector<Evento*> Eventos);
 
 //Lectura y escritura de archivos;
-void cargarArchivos(vector<Persona*> Personas,vector<Evento*> Eventos);
+void cargarArchivos(vector<Persona*> &Personas,vector<Evento*> &Eventos);
 void sobreEscritura(vector<Persona*> Personas,vector<Evento*> Eventos);
 
 //Otros
@@ -163,7 +163,7 @@ void consultarAsistentes(vector<Evento*> Eventos) {
     }
 }
 
-void cargarArchivos(vector<Persona*> Personas, vector<Evento*> Eventos) {
+void cargarArchivos(vector<Persona*>& Personas, vector<Evento*>& Eventos) {
     ifstream archivoPersonas("personas.txt");
 
     if (archivoPersonas.is_open()) {
@@ -194,6 +194,7 @@ void cargarArchivos(vector<Persona*> Personas, vector<Evento*> Eventos) {
         while (getline(archivoEventos, linea)) {
             stringstream ss(linea);
             string nombre, tipo, fecha, tema, ubicacion;
+            bool valido = true;
 
             getline(ss, nombre, ',');
             getline(ss, tipo, ',');
@@ -201,7 +202,16 @@ void cargarArchivos(vector<Persona*> Personas, vector<Evento*> Eventos) {
             getline(ss, tema, ',');
             getline(ss, ubicacion, ',');
 
-            Eventos.push_back(new Evento(nombre, tipo, fecha, tema, ubicacion));
+            //Validar que la linea tenga la información completa
+            if (nombre.empty() || tipo.empty() || fecha.empty() || tema.empty() || ubicacion.empty()) {
+                valido = false;
+            }
+
+            if (valido) {
+                Eventos.push_back(new Evento(nombre, tipo, fecha, tema, ubicacion));
+            } else {
+                cout << "Linea invalida en el archivo de eventos: " << linea << endl;
+            }
         }
         archivoEventos.close();
     } else {

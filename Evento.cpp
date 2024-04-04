@@ -25,6 +25,7 @@ void Evento::registrarAsistente(Persona* persona) {
 }
 
 void Evento::generarInformeIndividual() {
+    cout << "Nombre: " << nombre << endl;
     cout << "Evento: " << tipo << endl;
     cout << "Fecha: " << fecha << endl;
     cout << "Ubicacion: " << ubicacion << endl;
