@@ -137,9 +137,6 @@ void generarInformesTotales(vector<Evento> &Eventos) {
     }
 
 
-
-
-
 }
 
 void consultarAsistentes(vector<Evento> &Eventos) {
@@ -187,6 +184,27 @@ void cargarArchivos(vector<Persona>  &Personas, vector<Evento> &Eventos) {
     } else {
         cout << "Error al abrir el archivo de personas" << endl;
     }
+    ifstream archivoEventos("eventos.txt");
+
+    if (archivoEventos.is_open()) {
+        string linea;
+        while (getline(archivoEventos, linea)) {
+            stringstream ss(linea);
+            string nombre, tipo, fecha, tema, ubicacion;
+
+            getline(ss, nombre, ',');
+            getline(ss, tipo, ',');
+            getline(ss, fecha, ',');
+            getline(ss, tema, ',');
+            getline(ss, ubicacion, ',');
+
+            Eventos.push_back({nombre, tipo, fecha, tema, ubicacion});
+        }
+        archivoEventos.close();
+    } else {
+        cout << "Error al abrir el archivo de eventos" << endl;
+    }
+
 }
 
 bool inicioSesion(vector<Persona> &Personas){

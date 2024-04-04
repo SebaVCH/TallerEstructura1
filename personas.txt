@@ -1,3 +1,0 @@
-juanito,hola123,11.111.111-1,admin,administrador,Ninguno
-pedrito,hola1234,22.222.222-2,visitante,visitante,BodaDiego
-diegito,hola12345,33.333.333-3,trabajador,decorador,PremiacionPedro
