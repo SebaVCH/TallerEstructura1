@@ -21,8 +21,9 @@ public:
     string getTipo();
     string getOcupacion();
     string getEvento();
-
     void setEvento(string evento);
+
+    ~Persona();
 
 };
 

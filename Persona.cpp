@@ -23,6 +23,7 @@ void Persona::imprimirInformacion() {
 
 }
 
+
 string Persona::getNombre() {
     return nombre;
 }
@@ -54,3 +55,8 @@ string Persona::getEvento() {
 void Persona::setEvento(string evento) {
     this -> eventoAsignado = evento;
 }
+
+Persona::~Persona() {
+    cout << "Se borro la persona" << endl;
+}
+

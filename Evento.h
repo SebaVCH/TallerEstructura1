@@ -14,16 +14,19 @@ class Evento {
 
 private:
     string nombre,tipo,fecha,tema,ubicacion;
-    vector<Persona> personas;
+    vector<Persona*> personas;
 public:
     Evento(string nombre,string tipo, string fecha, string tema, string ubicacion);
-    void registrarAsistente(Persona &persona);
+    void registrarAsistente(Persona* persona);
     void generarInformeIndividual();
     void listadoAsistentes();
     string getNombreEvento();
     string getTipo();
+    string getTema();
+    string getFecha();
+    string getUbicacion();
     int cantidadPersonas();
-
+    ~Evento();
 };
 
 
