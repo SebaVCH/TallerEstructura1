@@ -61,6 +61,10 @@ Evento::~Evento() {
     cout << "Se borro el evento" << endl;
 }
 
+vector<Persona*> Evento::getListaPersonas(){
+    return personas;
+}
+
 string Evento::getTema() {
     return tema;
 }

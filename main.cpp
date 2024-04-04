@@ -1,6 +1,5 @@
 #include <iostream>
 #include <fstream>
-#include <unistd.h>
 #include <algorithm>
 #include <sstream>
 #include "Persona.h"
@@ -10,11 +9,11 @@ using namespace std;
 
 //Menus
 void menuGeneral();
-void menuAdmin(vector<Persona*> Personas,vector<Evento*> Eventos);
+void menuAdmin(vector<Persona*> &Personas,vector<Evento*> &Eventos);
 
 //Lectura y escritura de archivos;
 void cargarArchivos(vector<Persona*> &Personas,vector<Evento*> &Eventos);
-void sobreEscritura(vector<Persona*> Personas,vector<Evento*> Eventos);
+void sobreEscritura(vector<Persona*> &Personas,vector<Evento*> &Eventos);
 
 //Otros
 bool inicioSesion(vector<Persona*> Personas);
@@ -49,7 +48,7 @@ void menuGeneral(){
         bool inicio = inicioSesion(PersonasTotales);
         if (inicio == true){
             menuAdmin(PersonasTotales,EventosTotales);
-
+            sobreEscritura(PersonasTotales,EventosTotales);
         } else {
             cout << "Acceso denegado... " << endl;
         }
@@ -68,7 +67,6 @@ void menuGeneral(){
         }
 
     }
-    sobreEscritura(PersonasTotales,EventosTotales);
 
 }
 
@@ -85,7 +83,7 @@ void mostrarEventos(vector<Evento*> Eventos) {
 
 }
 
-void menuAdmin(vector<Persona*> Personas, vector<Evento*> Eventos){
+void menuAdmin(vector<Persona*> &Personas, vector<Evento*> &Eventos){
 
     int opcion = -1;
 
@@ -125,14 +123,18 @@ void generarInformesTotales(vector<Evento*> Eventos) {
 
     int cantidadEventosTotales = Eventos.size();
     int asistentesTotales = 0;
+    int edad = 0;
 
     for(Evento *evento: Eventos){
         asistentesTotales += evento->cantidadPersonas();
+        for (Persona *persona: evento->getListaPersonas()){
+            edad += persona->getEdad();
+        }
     }
 
     cout << "Total de eventos: " << cantidadEventosTotales<< endl;
     cout << "Total asistentes: " << asistentesTotales<< endl;
-    cout << "Promedio de asistentes por evento: " << asistentesTotales / cantidadEventosTotales << endl;
+    cout << "Edad promedio de todos los eventos: " << edad/asistentesTotales << endl;
 
     cout << "**Lista de asistentes por cada evento**" << endl;
     for(Evento *evento: Eventos){
@@ -262,7 +264,7 @@ void crearEvento(vector<Evento*> &Eventos) {
 
     Evento* nuevoEvento = new Evento(nombre,tipo,fecha,tema,ubicacion);
 
-    Eventos.emplace_back(nuevoEvento);
+    Eventos.push_back(nuevoEvento);
 
     cout << "Se agrego correctamente" << endl;
 
@@ -299,7 +301,7 @@ void registrarAsistentes(vector<Persona*> Personas,vector<Evento*> Eventos){
 
 }
 
-void sobreEscritura(vector<Persona*> Personas, vector<Evento*> Eventos){
+void sobreEscritura(vector<Persona*> &Personas, vector<Evento*> &Eventos){
 
     ofstream archivoPersonas("personas.txt");
     ofstream archivoEventos("eventos.txt");

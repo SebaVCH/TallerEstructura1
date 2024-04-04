@@ -14,15 +14,6 @@ Persona::Persona(string nombre, string password, string rut, int edad, string ti
     this -> eventoAsignado = eventoAsignado;
 }
 
-void Persona::imprimirInformacion() {
-    cout << "Nombre: " << nombre << endl;
-    cout << "Edad: " << edad << " años" << endl;
-    cout << "Evento asignado: " << eventoAsignado << endl;
-    cout << "Ocupación: " << ocupacion << endl;
-    cout << "Tipo: " << tipo << endl;
-
-}
-
 
 string Persona::getNombre() {
     return nombre;

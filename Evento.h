@@ -26,6 +26,7 @@ public:
     string getFecha();
     string getUbicacion();
     int cantidadPersonas();
+    vector<Persona*> getListaPersonas();
     ~Evento();
 };
 

@@ -13,7 +13,6 @@ private:
     int edad;
 public:
     Persona(string nombre, string password,string rut ,int edad,string tipo, string ocupacion, string eventoAsignado);
-    void imprimirInformacion();
     string getNombre();
     string getPass();
     string getRut();
